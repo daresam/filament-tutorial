@@ -15,14 +15,14 @@ class Department extends Model
         'name', ' team_id'
     ];
 
-    
+
     public function employees(): HasMany
     {
         return $this->hasMany(Employee::class);
     }
 
-    // public function team(): BelongsTo
-    // {
-    //     return $this->belongsTo(Team::class);
-    // }
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(Team::class);
+    }
 }

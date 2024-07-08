@@ -3,6 +3,8 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\CityResource\Pages;
+use App\Filament\Resources\CityResource\RelationManagers\EmployeesRelationManager;
+use App\Filament\Resources\CityResource\RelationManagers\StateRelationManager;
 use App\Models\City;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -28,6 +30,16 @@ class CityResource extends Resource
     protected static ?string $navigationGroup = 'System Management';
 
     protected static ?int $navigationSort = 3;
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
+    public static function getNavigationBadgeColor(): string|array|null
+    {
+        return static::getModel()::count() > 10 ? 'warning' : 'success';
+    }
 
     public static function form(Form $form): Form
     {
@@ -94,7 +106,8 @@ class CityResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            StateRelationManager::class,
+            EmployeesRelationManager::class
         ];
     }
 
