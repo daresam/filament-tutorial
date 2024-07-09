@@ -21,7 +21,7 @@ class StatsAppOverview extends BaseWidget
                 ->description('All teams from the database')
                 ->descriptionIcon('heroicon-m-arrow-trending-down')
                 ->color('danger'),
-            Stat::make('Employees', Employee::query()->whereBelongsTo(Filament::getTenant())->count())
+            Stat::make('Employees', \App\Models\Employee::query()->whereBelongsTo(Filament::getTenant())->count())
                 ->description('All employees from the database')
                 ->descriptionIcon('heroicon-m-arrow-trending-up')
                 ->color('success'),

@@ -38,7 +38,11 @@ class AppPanelProvider extends PanelProvider
                     ->label('Admin')
                     ->icon('heroicon-o-cog-6-tooth')
                     ->url('/admin')
-                    ->visible(fn (): bool => auth()->user()->is_admin)
+                    ->visible(fn (): bool => true)
+                    // ->visible(fn (): bool => auth()->user()->hasRole(config('filament-shield.super_admin.name', 'super_admin'))),
+            ])
+             ->plugins([
+                \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make()
             ])
             ->brandLogo(asset('images/ecams-logo.png'))
             ->favicon(asset('images/favicon.ico'))

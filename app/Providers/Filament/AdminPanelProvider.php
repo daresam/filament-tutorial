@@ -37,6 +37,9 @@ class AdminPanelProvider extends PanelProvider
                 'success' => Color::Emerald,
                 'warning' => Color::Orange,
             ])
+            ->plugins([
+                \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make()
+            ])
             ->userMenuItems([
                 MenuItem::make()
                     ->label('App')
@@ -71,7 +74,7 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
-                VerifyIsAdmin::class
+                // VerifyIsAdmin::class
             ]);
             // ->authMiddleware([
             //     Authenticate::class,

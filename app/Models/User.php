@@ -3,20 +3,23 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use BezhanSalleh\FilamentShield\FilamentShield;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements FilamentUser, HasTenants
 {
-    use HasFactory, Notifiable;
+    use HasFactory, HasPanelShield, HasRoles, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -53,6 +56,20 @@ class User extends Authenticatable implements FilamentUser, HasTenants
         ];
     }
 
+    protected static function booted(): void
+    {
+        if (config('filament-shield.app_user.enabled', false)) {
+            FilamentShield::createRole(name: config('filament-shield.app_user.name', 'app_user'));
+            static::created(function (User $user) {
+                $user->assignRole(config('filament-shield.app_user.name', 'app_user'));
+            });
+            static::deleting(function (User $user) {
+                $user->removeRole(config('filament-shield.app_user.name', 'app_user'));
+            });
+
+        }
+    }
+
     public function teams(): BelongsToMany
     {
         return $this->belongsToMany(Team::class);
@@ -68,12 +85,14 @@ class User extends Authenticatable implements FilamentUser, HasTenants
         return $this->teams()->whereKey($tenant)->exists();
     }
 
-    public function canAccessPanel(Panel $panel): bool {
-        return true;
+    public function canAccessPanel(Panel $panel): bool
+    {
+        if ($panel->getId() === 'admin') {
+            return $this->hasRole(Utils::getSuperAdminName());
+        } elseif ($panel->getId() === 'app') {
+            return $this->hasRole(Utils::getSuperAdminName()) || $this->hasRole(config('filament-shield.app_user.name', 'app_user'));
+        }
+
+        return false;
     }
-
-
 }
-
-
-

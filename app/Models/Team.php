@@ -23,6 +23,11 @@ class Team extends Model
         return $this->hasMany(Employee::class);
     }
 
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(CustomRole::class);
+    }
+
     public function users(): HasMany
     {
         return $this->hasMany(User::class);
